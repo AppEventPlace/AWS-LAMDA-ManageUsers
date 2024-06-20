@@ -68,7 +68,7 @@ exports.updateUser = async (event) => {
         }
 
         if (updateExpression.length === 0) {
-            throw new Error("No se proporcionaron campos para actualizar");
+            throw new Error("No se proporcionaron los campos para actualizar");
         }
 
         const params = {

@@ -10,6 +10,25 @@ authorName: 'Serverless, inc.'
 authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 -->
 
+
+# Configuracion y creación del Lambda a traves del Framework de serverless con Node HTTP API on AWS
+
+1- configurar el usuario de CLI AWS para visual estudio con el comando: aws configure, inmediatamente proporcionar los datos:
+Clave de acceso
+Clave Secreta
+
+2- Instalr las dependencias con los siguientes comandos
+  npm i uuid
+	npm i aws-sdk
+	npm install -g serverless
+
+3- ejecutar el comando: serverless y posteriormente seleccionar la siguiente opcion:
+AWS - Node.js - HTTP API -- seleccionar nombre del proyecto aws-lamda-crud-node
+
+4- Para desplegar el lambda en AWS utilizar el siguiente comando: 
+
+serverless deploy --verbose -- desplegar
+
 # Serverless Framework Node HTTP API on AWS
 
 This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.

@@ -13,34 +13,25 @@ exports.addUser = async (event) => {
             throw new Error("Todos los campos son obligatorios");
         }
 
-        /* Configurar los parámetros para la consulta
-        const params = {
-            TableName: "Cliente",
-            IndexName: "CelularIndex",
-            KeyConditionExpression: "celular = :celular",
+        // Verificar si el email ya existe en la tabla Cliente
+        const emailCheckParams = {
+            TableName: 'Cliente',
+            IndexName: 'EmailIndex', // Asegúrate de tener un índice global secundario en la tabla por el campo email
+            KeyConditionExpression: 'email = :email',
             ExpressionAttributeValues: {
-                ":celular": celular
+                ':email': email
             }
-        };*/
+        };
 
-          // Configurar los parámetros para la consulta
-          /*const params = {
-            TableName: "Cliente",
-            Key: {
-                CelularIndex: celular
-            }
-        };*/
-        // Ejecutar la consulta
-        //const result = await dynamodb.get(params).promise();
-
-        //const result = await dynamodb.query(queryParams).promise();
-
-        if (!result.Item) {
-            throw new Error("Usuario no encontrado");
+        let emailCheckResult;
+        try {
+            emailCheckResult = await dynamodb.query(emailCheckParams).promise();
+        } catch (error) {
+            throw new Error("Error al verificar el email en la base de datos");
         }
 
-        if (result.Items.length > 0) {
-            throw new Error("El usuario con este número de celular ya existe");
+        if (emailCheckResult.Items.length > 0) {
+            throw new Error("El usuario con este email ya existe");
         }
 
         const createDate = new Date();
@@ -88,15 +79,16 @@ exports.addUser = async (event) => {
 
         // Manejo de errores
         let errorMessage = "Error interno del servidor";
-        let errorDescription = newTask;
+        let errorDescription = error.message;
         let statusCode = 500;
 
-        if (error.message === "Todos los campos son obligatorios") {
+        if (error.message === "Todos los campos son obligatorios" || error.message === "El usuario con este email ya existe") {
             errorMessage = error.message;
             statusCode = 400;
-        } else if (error.message === "El usuario con este número de celular ya existe") {
+        } else if (error.message === "Error al verificar el email en la base de datos") {
             errorMessage = error.message;
-            statusCode = 409;
+            error= error;
+            statusCode = 500;
         }
 
         response = {

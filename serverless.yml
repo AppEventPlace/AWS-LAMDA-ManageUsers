@@ -1,7 +1,7 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: studentassasa
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: aws-lambda-createuser
+service: aws-lambda-manageusers
 
 provider:
   name: aws
@@ -13,13 +13,8 @@ provider:
         - dynamodb:*
       Resource:
         - arn:aws:dynamodb:us-east-1:519010577666:table/Cliente
+        - arn:aws:dynamodb:us-east-1:519010577666:table/Cliente/index/EmailIndex
 functions:
-  hello:
-    handler: src/handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
   createUser:
     handler: src/addUser.addUser
     events:
@@ -32,6 +27,12 @@ functions:
       - httpApi:
           path: /getUser/{id}
           method: get
+  updateUser:
+    handler: src/updateUser.updateUser
+    events:
+      - httpApi:
+          path: /updateUser
+          method: post
 resources:
   Resources:
     TaskTable:
@@ -42,15 +43,15 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: celular
+          - AttributeName: email
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: CelularIndex
+          - IndexName: EmailIndex
             KeySchema:
-              - AttributeName: celular
+              - AttributeName: email
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
